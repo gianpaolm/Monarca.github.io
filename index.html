@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,6 +84,12 @@
              color: white;
              border-color: #4a4a4a;
         }
+
+        /* Clase activa para el menú de navegación */
+        .nav-link.active {
+            color: #dcb5b5; /* rose-dust */
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-rose-dust selection:text-white">
@@ -99,10 +105,10 @@
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#catalogo" class="text-sm uppercase tracking-widest hover:text-rose-dust transition-colors">Colecciones</a>
-                    <a href="#nosotros" class="text-sm uppercase tracking-widest hover:text-rose-dust transition-colors">Atelier</a>
-                    <a href="#testimonios" class="text-sm uppercase tracking-widest hover:text-rose-dust transition-colors">Clientes Felices</a>
-                    <a href="#contacto" class="text-sm uppercase tracking-widest hover:text-rose-dust transition-colors">Contacto</a>
+                    <a href="#catalogo" class="nav-link text-sm uppercase tracking-widest hover:text-rose-dust transition-colors duration-300">Colecciones</a>
+                    <a href="#nosotros" class="nav-link text-sm uppercase tracking-widest hover:text-rose-dust transition-colors duration-300">Atelier</a>
+                    <a href="#testimonios" class="nav-link text-sm uppercase tracking-widest hover:text-rose-dust transition-colors duration-300">Clientes Felices</a>
+                    <a href="#contacto" class="nav-link text-sm uppercase tracking-widest hover:text-rose-dust transition-colors duration-300">Contacto</a>
                 </div>
 
                 <!-- Botón de Contacto Rápido -->
@@ -136,7 +142,7 @@
     </header>
 
     <!-- Catálogo Section -->
-    <section id="catalogo" class="py-16 bg-white">
+    <section id="catalogo" class="py-16 bg-white section-observer">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="text-center mb-10">
@@ -145,10 +151,11 @@
             </div>
 
             <!-- Filtros: Ocasiones -->
-            <div class="flex flex-col items-center gap-6 mb-12">
+            <div class="flex flex-col items-center gap-6 mb-8">
                 
                 <!-- Fila 1: Ocasiones -->
                 <div class="flex flex-wrap justify-center gap-3 overflow-x-auto no-scrollbar w-full">
+                    <!-- Nota: El botón "Todo" ya existe aquí, pero añadiremos uno más explícito abajo -->
                     <button onclick="filterProducts('all')" class="category-btn active px-5 py-2 rounded-full border border-gray-200 text-xs uppercase tracking-wide transition-all duration-300 hover:border-rose-dust hover:text-rose-dust">
                         Todo
                     </button>
@@ -187,6 +194,14 @@
                 </div>
             </div>
 
+            <!-- Botón Extra "Ver Todo" -->
+            <div class="flex justify-center mb-12">
+                <button onclick="filterProducts('all')" class="group flex items-center gap-2 px-6 py-2 border border-gray-300 rounded-full hover:border-charcoal-muted hover:bg-charcoal-muted hover:text-white transition-all duration-300">
+                    <i class="ph ph-squares-four text-lg"></i>
+                    <span class="text-xs uppercase tracking-widest">Ver todo el catálogo</span>
+                </button>
+            </div>
+
             <!-- Grid de Productos -->
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <!-- Los productos se inyectan aquí con JS -->
@@ -196,7 +211,7 @@
     </section>
 
     <!-- Sección "Sobre Nosotros" / Banner -->
-    <section id="nosotros" class="py-20 bg-stone-100">
+    <section id="nosotros" class="py-20 bg-stone-100 section-observer">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
             <div class="w-full md:w-1/2 h-96 relative overflow-hidden rounded-lg shadow-xl">
                 <!-- Imagen actualizada a solo flores -->
@@ -226,7 +241,7 @@
     </section>
 
     <!-- Sección Clientes Felices (Nuevo) -->
-    <section id="testimonios" class="py-20 bg-white">
+    <section id="testimonios" class="py-20 bg-white section-observer">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <span class="text-xs text-rose-dust uppercase tracking-widest font-bold">Clientes Satisfechos</span>
@@ -278,7 +293,7 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contacto" class="bg-white pt-20 pb-10 border-t border-gray-100">
+    <footer id="contacto" class="bg-white pt-20 pb-10 border-t border-gray-100 section-observer">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="font-serif text-4xl italic text-gray-800 mb-2">Monarca.</div>
             <div class="text-gray-500 font-light mb-6 flex flex-col items-center">
@@ -467,6 +482,8 @@
             }
         }
 
+        // --- 4. Animaciones y Efectos ---
+
         // Efecto scroll en Navbar
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
@@ -479,8 +496,37 @@
             }
         });
 
+        // Intersection Observer para resaltar menú
         document.addEventListener('DOMContentLoaded', () => {
             renderProducts('all');
+
+            const sections = document.querySelectorAll('.section-observer'); // Añadimos esta clase a las secciones
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                threshold: 0.3, // Cuando el 30% de la sección es visible
+                rootMargin: "-20% 0px -20% 0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        // Remover activo de todos
+                        navLinks.forEach(link => link.classList.remove('active'));
+                        // Añadir activo al correspondiente
+                        const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                        if(activeLink) activeLink.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            // Observamos las secciones principales: catalogo, nosotros, testimonios, contacto
+            // Asegurarnos de que las secciones tengan la clase o las seleccionamos por ID
+            document.querySelectorAll('section, footer').forEach(section => {
+                observer.observe(section);
+            });
         });
 
     </script>
